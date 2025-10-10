@@ -1,84 +1,89 @@
 // src/app.js
-
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
+const passport = require('passport');
+const pino = require('pino-http');
+
+// Custom modules
+const authenticate = require('./auth');
+const routes = require('./routes');
+const apiRoutes = require('./routes/api');
+const logger = require('./logger');
 
 // author and version from our package.json file
-// TODO: make sure you have updated your name in the `author` section. done
 const { author, version } = require('../package.json');
 
-const logger = require('./logger');
-const pino = require('pino-http')({
-  // Use our default logger instance, which is already configured
-  logger,
-});
-
-// Create an express app instance we can use to attach middleware and HTTP routes
+// Create an express app
 const app = express();
 
-// Use pino logging middleware
-app.use(pino);
+// JSON parsing
+app.use(express.json());
 
-// Use helmetjs security middleware
+// Logging with Pino
+app.use(
+  pino({
+    logger
+  })
+);
+
+// Security, CORS, Compression
 app.use(helmet());
-
-// Use CORS middleware so we can make requests across origins
 app.use(cors());
-
-// Use gzip/deflate compression middleware
 app.use(compression());
 
-// Define a simple health check route. If the server is running
-// we'll respond with a 200 OK.  If not, the server isn't healthy.
-app.get('/', (req, res) => {
-  // Clients shouldn't cache this response (always request it fresh)
-  // See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching#controlling_caching
-  res.setHeader('Cache-Control', 'no-cache');
+// Initialize passport authentication
+passport.use(authenticate.strategy());
+app.use(passport.initialize());
 
-  // Send a 200 'OK' response with info about our repo
+// Main routes
+app.use('/', routes);
+app.use('/v1/fragments', apiRoutes);
+
+// Health check route
+app.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache');
   res.status(200).json({
     status: 'ok',
     author,
-    // TODO: change this to use your GitHub username! done
     githubUrl: 'https://github.com/yuyuUNny/fragments',
-    version,
+    version
   });
 });
 
-// Add 404 middleware to handle any requests for resources that can't be found
+// 404 handler
 app.use((req, res) => {
   res.status(404).json({
     status: 'error',
     error: {
       message: 'not found',
-      code: 404,
-    },
+      code: 404
+    }
   });
 });
 
-// Add error-handling middleware to deal with anything else
-// eslint-disable-next-line no-unused-vars
-app.use((err, req, res, next) => {
-  // We may already have an error response we can use, but if not,
-  // use a generic `500` server error and message.
+// Error handler
+app.use((err, req, res) => {
   const status = err.status || 500;
   const message = err.message || 'unable to process request';
 
-  // If this is a server error, log something so we can see what's going on.
   if (status > 499) {
-    logger.error({ err }, `Error processing request`);
+    logger.error({ err }, 'Error processing request');
+  }
+
+  if (process.env.NODE_ENV !== 'test') {
+    logger.error(err);
   }
 
   res.status(status).json({
     status: 'error',
     error: {
       message,
-      code: status,
-    },
+      code: status
+    }
   });
 });
 
-// Export our `app` so we can access it in server.js
+// Export app
 module.exports = app;

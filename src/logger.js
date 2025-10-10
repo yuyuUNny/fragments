@@ -2,29 +2,25 @@
 
 const pino = require('pino');
 
-// Use `info` as our standard log level if not specified
-const options = { level: process.env.LOG_LEVEL || 'info' };
+// Default log level
+const level = process.env.LOG_LEVEL || 'info';
+const options = { level };
 
-// If we're doing `debug` logging, make the logs easier to read
-if (options.level === 'debug') {
-  // https://github.com/pinojs/pino-pretty
+// Enable pretty printing if in debug mode
+if (level === 'debug') {
   options.transport = {
     target: 'pino-pretty',
     options: {
-      colorize: true,
-    },
+      colorize: true
+    }
   };
 }
-
-// // Create and export a Pino Logger instance:
-// // https://getpino.io/#/docs/api?id=logger
-// module.exports = require('pino')(options);
 
 // Create the logger instance
 const logger = pino(options);
 
-// If debug mode, print all environment variables once
-if (process.env.LOG_LEVEL === 'debug') {
+// Print environment variables once in debug mode
+if (level === 'debug') {
   logger.debug('--- Environment Variables ---');
   logger.debug(process.env);
   logger.debug('-----------------------------');

@@ -1,0 +1,17 @@
+{
+  "env": {
+    "es2022": true,
+    "node": true,
+    "jest": true
+  },
+  "extends": ["standard", "plugin:jest/recommended"],
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "plugins": ["jest"],
+  "rules": {
+    "jest/expect-expect": "off",
+    "semi": ["error", "always"],
+    "no-extra-semi": "off"
+  }
+}
