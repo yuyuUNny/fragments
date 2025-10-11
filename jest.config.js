@@ -1,10 +1,8 @@
 // jest.config.js
-
-// Get the full path to our env.jest file
 const path = require('path');
-const envFile = path.join(__dirname, 'env.jest');
+const envFile = path.join(__dirname, '.env');
 
-// Read the environment variables we use for Jest from our env.jest file
+// Read the environment variables
 require('dotenv').config({ path: envFile });
 
 // Log a message to remind developers how to see more detail from log messages
