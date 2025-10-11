@@ -8,7 +8,6 @@ const pino = require('pino-http');
 
 // Custom modules
 const authenticate = require('./auth');
-const routes = require('./routes');
 const apiRoutes = require('./routes/api');
 const logger = require('./logger');
 
@@ -24,7 +23,7 @@ app.use(express.json());
 // Logging with Pino
 app.use(
   pino({
-    logger,
+    logger
   })
 );
 
@@ -47,7 +46,7 @@ app.get('/', (req, res) => {
     status: 'ok',
     author,
     githubUrl: 'https://github.com/yuyuUNny/fragments',
-    version,
+    version
   });
 });
 
@@ -57,8 +56,8 @@ app.use((req, res) => {
     status: 'error',
     error: {
       message: 'not found',
-      code: 404,
-    },
+      code: 404
+    }
   });
 });
 
@@ -79,8 +78,8 @@ app.use((err, req, res) => {
     status: 'error',
     error: {
       message,
-      code: status,
-    },
+      code: status
+    }
   });
 });
 

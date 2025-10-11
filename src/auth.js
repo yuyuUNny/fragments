@@ -6,7 +6,7 @@ const logger = require('./logger');
 const jwtVerifier = CognitoJwtVerifier.create({
   userPoolId: process.env.AWS_COGNITO_POOL_ID,
   clientId: process.env.AWS_COGNITO_CLIENT_ID,
-  tokenUse: 'id',
+  tokenUse: 'id'
 });
 
 logger.info('Configured to use AWS Cognito for Authorization');
