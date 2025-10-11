@@ -1,15 +1,21 @@
-# start the server
+# Fragments API
+
+## start the server
 
 npm start
 
-# linting
+## linting
 
 npm run lint
 
-# debugging
+## debugging
 
 npm run debug
 
-# run the server
+## run the server
 
 npm run dev
+
+## run tests
+
+npm test

@@ -15,7 +15,7 @@ logger.info('Using HTTP Basic Auth for auth');
 module.exports.strategy = () =>
   authPassport(
     auth.basic({
-      file: process.env.HTPASSWD_FILE
+      file: process.env.HTPASSWD_FILE,
     })
   );
 

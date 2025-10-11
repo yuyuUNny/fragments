@@ -24,7 +24,7 @@ app.use(express.json());
 // Logging with Pino
 app.use(
   pino({
-    logger
+    logger,
   })
 );
 
@@ -38,7 +38,6 @@ passport.use(authenticate.strategy());
 app.use(passport.initialize());
 
 // Main routes
-app.use('/', routes);
 app.use('/v1/fragments', apiRoutes);
 
 // Health check route
@@ -48,7 +47,7 @@ app.get('/', (req, res) => {
     status: 'ok',
     author,
     githubUrl: 'https://github.com/yuyuUNny/fragments',
-    version
+    version,
   });
 });
 
@@ -58,8 +57,8 @@ app.use((req, res) => {
     status: 'error',
     error: {
       message: 'not found',
-      code: 404
-    }
+      code: 404,
+    },
   });
 });
 
@@ -80,8 +79,8 @@ app.use((err, req, res) => {
     status: 'error',
     error: {
       message,
-      code: status
-    }
+      code: status,
+    },
   });
 });
 

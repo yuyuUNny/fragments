@@ -11,8 +11,8 @@ if (level === 'debug') {
   options.transport = {
     target: 'pino-pretty',
     options: {
-      colorize: true
-    }
+      colorize: true,
+    },
   };
 }
 

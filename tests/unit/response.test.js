@@ -12,8 +12,8 @@ describe('API Responses', () => {
       status: 'error',
       error: {
         code: 404,
-        message: 'not found'
-      }
+        message: 'not found',
+      },
     });
   });
 
@@ -23,7 +23,7 @@ describe('API Responses', () => {
     const successResponse = createSuccessResponse();
     // Expect the result to look like the following
     expect(successResponse).toEqual({
-      status: 'ok'
+      status: 'ok',
     });
   });
 
@@ -36,7 +36,7 @@ describe('API Responses', () => {
     expect(successResponse).toEqual({
       status: 'ok',
       a: 1,
-      b: 2
+      b: 2,
     });
   });
 });
