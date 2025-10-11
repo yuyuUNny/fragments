@@ -5,10 +5,11 @@ const helmet = require('helmet');
 const compression = require('compression');
 const passport = require('passport');
 const pino = require('pino-http');
+const contentType = require('content-type');
+const Fragment = require('./model/fragment');
 
 // Custom modules
 const authenticate = require('./auth');
-const apiRoutes = require('./routes/api');
 const logger = require('./logger');
 
 // author and version from our package.json file
@@ -36,8 +37,18 @@ app.use(compression());
 passport.use(authenticate.strategy());
 app.use(passport.initialize());
 
+const rawBody = () =>
+  express.raw({
+    inflate: true,
+    limit: '5mb',
+    type: (req) => {
+      const { type } = contentType.parse(req);
+      return Fragment.isSupportedType(type);
+    }
+  });
 // Main routes
-app.use('/v1/fragments', apiRoutes);
+app.use('/v1/fragments', rawBody());
+app.use('/', require('./routes'));
 
 // Health check route
 app.get('/', (req, res) => {

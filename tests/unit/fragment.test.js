@@ -73,7 +73,7 @@ describe('Fragment class', () => {
     };
 
     // First create a fragment for the user
-    await writeFragment(fragment.id, fragment);
+    await writeFragment(fragment);
 
     // Now test byUser
     const fragments = await Fragment.byUser(ownerId);
@@ -92,17 +92,17 @@ describe('Fragment class', () => {
     };
 
     // First create a fragment
-    await writeFragment(fragment.id, fragment);
+    await writeFragment(fragment);
 
     // Now test byId
-    const result = await Fragment.byId(fragment.id);
+    const result = await Fragment.byId(fragment.ownerId, fragment.id);
     expect(result).toBeInstanceOf(Fragment);
     expect(result.id).toBe(fragment.id);
   });
 
   // Write a test for byId() with non-existent fragment
   test('byId() should return null for non-existent fragment', async () => {
-    const result = await Fragment.byId('non-existent-id');
+    const result = await Fragment.byId('test-owner', 'non-existent-id');
     expect(result).toBeNull();
   });
 
@@ -116,7 +116,7 @@ describe('Fragment class', () => {
     await fragment.save();
 
     // Check that it was saved to the database
-    const savedFragment = await readFragment(fragment.id);
+    const savedFragment = await readFragment(fragment.ownerId, fragment.id);
     expect(savedFragment).toBeDefined();
     expect(savedFragment.id).toBe(fragment.id);
   });
@@ -129,7 +129,7 @@ describe('Fragment class', () => {
     });
 
     const testData = Buffer.from('Hello, world!');
-    await writeFragmentData(fragment.id, testData);
+    await writeFragmentData(fragment.ownerId, fragment.id, testData);
 
     const result = await fragment.getData();
     expect(result).toEqual(testData);
@@ -148,7 +148,7 @@ describe('Fragment class', () => {
     expect(fragment.size).toBe(testData.length);
 
     // Check that data was saved
-    const savedData = await readFragmentData(fragment.id);
+    const savedData = await readFragmentData(fragment.ownerId, fragment.id);
     expect(savedData).toEqual(testData);
   });
 
@@ -167,7 +167,7 @@ describe('Fragment class', () => {
     expect(result).toBe(true);
 
     // Verify it's deleted
-    const deletedFragment = await readFragment(fragment.id);
+    const deletedFragment = await readFragment(fragment.ownerId, fragment.id);
     expect(deletedFragment).toBeNull();
   });
 });

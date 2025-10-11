@@ -1,118 +1,91 @@
-// src/model/data/memory/memory-db.js
+const validateKey = (key) => typeof key === 'string';
 
-/**
- * In-Memory Database Implementation for Assignment 1
- * Uses JavaScript Map objects to store fragment metadata and data
- */
-
-// Simple in-memory storage for fragments
-const fragments = new Map();
-const fragmentData = new Map();
-
-/**
- * Write fragment metadata to memory
- * @param {string} id - Fragment ID
- * @param {object} fragment - Fragment metadata object
- * @returns {Promise<void>}
- */
-async function writeFragment (id, fragment) {
-  if (!id || !fragment) {
-    throw new Error('ID and fragment object are required');
+class MemoryDB {
+  constructor () {
+    /** @type {Record<string, any>} */
+    this.db = {};
   }
 
-  // Store the fragment metadata with created timestamp
-  fragments.set(id, {
-    ...fragment,
-    created: fragment.created || new Date().toISOString(),
-    updated: new Date().toISOString()
-  });
-}
-
-/**
- * Read fragment metadata from memory
- * @param {string} id - Fragment ID
- * @returns {Promise<object|null>} Fragment metadata or null if not found
- */
-async function readFragment (id) {
-  if (!id) {
-    throw new Error('ID is required');
-  }
-
-  return fragments.get(id) || null;
-}
-
-/**
- * Write fragment data to memory
- * @param {string} id - Fragment ID
- * @param {Buffer} data - Fragment data
- * @returns {Promise<void>}
- */
-async function writeFragmentData (id, data) {
-  if (!id) {
-    throw new Error('ID is required');
-  }
-
-  if (!Buffer.isBuffer(data)) {
-    throw new Error('Data must be a Buffer');
-  }
-
-  fragmentData.set(id, Buffer.from(data));
-}
-
-/**
- * Read fragment data from memory
- * @param {string} id - Fragment ID
- * @returns {Promise<Buffer|null>} Fragment data or null if not found
- */
-async function readFragmentData (id) {
-  if (!id) {
-    throw new Error('ID is required');
-  }
-
-  return fragmentData.get(id) || null;
-}
-
-/**
- * List fragment IDs for a user
- * @param {string} ownerId - Owner ID (hashed email)
- * @returns {Promise<string[]>} Array of fragment IDs
- */
-async function listFragments (ownerId) {
-  if (!ownerId) {
-    throw new Error('Owner ID is required');
-  }
-
-  const userFragments = [];
-  for (const [id, fragment] of fragments.entries()) {
-    if (fragment.ownerId === ownerId) {
-      userFragments.push(id);
+  /**
+   * Gets a value for the given primaryKey and secondaryKey
+   * @param {string} primaryKey
+   * @param {string} secondaryKey
+   * @returns {Promise<any>}
+   */
+  get (primaryKey, secondaryKey) {
+    if (!(validateKey(primaryKey) && validateKey(secondaryKey))) {
+      throw new Error(
+        `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+      );
     }
+
+    const db = this.db;
+    const value = db[primaryKey] && db[primaryKey][secondaryKey];
+    return Promise.resolve(value);
   }
 
-  return userFragments;
-}
+  /**
+   * Puts a value into the given primaryKey and secondaryKey
+   * @param {string} primaryKey
+   * @param {string} secondaryKey
+   * @returns {Promise<void>}
+   */
+  put (primaryKey, secondaryKey, value) {
+    if (!(validateKey(primaryKey) && validateKey(secondaryKey))) {
+      throw new Error(
+        `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+      );
+    }
 
-/**
- * Delete a fragment and its data
- * @param {string} id - Fragment ID
- * @returns {Promise<boolean>} True if deleted, false if not found
- */
-async function deleteFragment (id) {
-  if (!id) {
-    throw new Error('ID is required');
+    const db = this.db;
+    // Make sure the `primaryKey` exists, or create
+    db[primaryKey] = db[primaryKey] || {};
+    // Add the `value` to the `secondaryKey`
+    db[primaryKey][secondaryKey] = value;
+    return Promise.resolve();
   }
 
-  const deleted = fragments.delete(id);
-  fragmentData.delete(id);
+  /**
+   * Queries the list of values (i.e., secondaryKeys) for the given primaryKey.
+   * Always returns an Array, even if no items are found.
+   * @param {string} primaryKey
+   * @returns {Promise<any[]>}
+   */
+  query (primaryKey) {
+    if (!validateKey(primaryKey)) {
+      throw new Error(`primaryKey string is required, got primaryKey=${primaryKey}`);
+    }
 
-  return deleted;
+    // No matter what, we always return an array (even if empty)
+    const db = this.db;
+    const values = db[primaryKey] ? Object.values(db[primaryKey]) : [];
+    return Promise.resolve(values);
+  }
+
+  /**
+   * Deletes the value with the given primaryKey and secondaryKey
+   * @param {string} primaryKey
+   * @param {string} secondaryKey
+   * @returns {Promise<void>}
+   */
+  async del (primaryKey, secondaryKey) {
+    if (!(validateKey(primaryKey) && validateKey(secondaryKey))) {
+      throw new Error(
+        `primaryKey and secondaryKey strings are required, got primaryKey=${primaryKey}, secondaryKey=${secondaryKey}`
+      );
+    }
+
+    // Throw if trying to delete a key that doesn't exist
+    if (!(await this.get(primaryKey, secondaryKey))) {
+      throw new Error(
+        `missing entry for primaryKey=${primaryKey} and secondaryKey=${secondaryKey}`
+      );
+    }
+
+    const db = this.db;
+    delete db[primaryKey][secondaryKey];
+    return Promise.resolve();
+  }
 }
 
-module.exports = {
-  writeFragment,
-  readFragment,
-  writeFragmentData,
-  readFragmentData,
-  listFragments,
-  deleteFragment
-};
+module.exports = MemoryDB;

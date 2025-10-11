@@ -1,7 +1,7 @@
 // src/auth/cognito.js
-const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const { CognitoJwtVerifier } = require('aws-jwt-verify');
+const authorize = require('./auth-middleware');
 
 const logger = require('../logger');
 
@@ -39,4 +39,4 @@ module.exports.strategy = () =>
     }
   });
 
-module.exports.authenticate = () => passport.authenticate('bearer', { session: false });
+module.exports.authenticate = () => authorize('bearer');

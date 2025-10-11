@@ -1,5 +1,5 @@
 // src/model/fragment.js
-
+const contentType = require('content-type');
 const crypto = require('crypto');
 const {
   writeFragment,
@@ -12,6 +12,10 @@ const {
 
 class Fragment {
   constructor ({ id, ownerId, created, updated, type, size = 0 }) {
+    if (!ownerId || !type) throw new Error('ownerId and type are required');
+    if (typeof size !== 'number' || size < 0) throw new Error('Invalid size');
+    if (!Fragment.isSupportedType(type)) throw new Error(`Unsupported type: ${type}`);
+
     // If no ID is provided, generate one
     this.id = id || crypto.randomUUID();
     this.ownerId = ownerId;
@@ -35,7 +39,7 @@ class Fragment {
     const fragments = [];
 
     for (const id of fragmentIds) {
-      const fragmentData = await readFragment(id);
+      const fragmentData = await readFragment(ownerId, id);
       if (fragmentData) {
         fragments.push(new Fragment(fragmentData));
       }
@@ -49,12 +53,12 @@ class Fragment {
    * @param {string} id - Fragment ID
    * @returns {Promise<Fragment|null>} - Fragment object or null if not found
    */
-  static async byId (id) {
+  static async byId (ownerId, id) {
     if (!id) {
       throw new Error('ID is required');
     }
 
-    const fragmentData = await readFragment(id);
+    const fragmentData = await readFragment(ownerId, id);
     return fragmentData ? new Fragment(fragmentData) : null;
   }
 
@@ -64,7 +68,7 @@ class Fragment {
    */
   async save () {
     this.updated = new Date().toISOString();
-    await writeFragment(this.id, {
+    await writeFragment({
       id: this.id,
       ownerId: this.ownerId,
       created: this.created,
@@ -79,7 +83,7 @@ class Fragment {
    * @returns {Promise<Buffer|null>} - Fragment data or null if not found
    */
   async getData () {
-    return await readFragmentData(this.id);
+    return await readFragmentData(this.ownerId, this.id);
   }
 
   /**
@@ -95,7 +99,7 @@ class Fragment {
     this.size = data.length;
     this.updated = new Date().toISOString();
 
-    await writeFragmentData(this.id, data);
+    await writeFragmentData(this.ownerId, this.id, data);
     await this.save(); // Update metadata with new size and timestamp
   }
 
@@ -104,7 +108,34 @@ class Fragment {
    * @returns {Promise<boolean>} - True if deleted, false if not found
    */
   async delete () {
-    return await deleteFragment(this.id);
+    return await deleteFragment(this.ownerId, this.id);
+  }
+
+  /**
+   * Returns the mime type (e.g., without encoding) for the fragment's type:
+   * "text/html; charset=utf-8" -> "text/html"
+   * @returns {string} fragment's mime type (without encoding)
+   */
+  get mimeType () {
+    const { type } = contentType.parse(this.type);
+    return type;
+  }
+
+  /**
+   * Returns true if this fragment is a text/* mime type
+   * @returns {boolean} true if fragment's type is text/*
+   */
+  get isText () {
+    return this.mimeType.startsWith('text/');
+  }
+
+  /**
+   * Returns the formats into which this fragment type can be converted
+   * @returns {Array<string>} list of supported mime types
+   */
+  get formats () {
+    if (this.isText) return ['text/plain'];
+    return [];
   }
 
   /**
@@ -113,8 +144,6 @@ class Fragment {
    * @returns {boolean} - True if supported, false otherwise
    */
   static isSupportedType (type) {
-    // For Assignment 1, only support text/plain
-    // TODO: Expand this for future assignments
     return type === 'text/plain';
   }
 }

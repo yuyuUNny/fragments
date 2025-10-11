@@ -1,100 +1,90 @@
-// tests/unit/memory-db.test.js
+// Fix this path to point to your project's `memory-db.js` source file
+const MemoryDB = require('../../src/model/data/memory/memory-db');
 
-const {
-  writeFragment,
-  readFragment,
-  writeFragmentData,
-  readFragmentData,
-  listFragments,
-  deleteFragment
-} = require('../../src/model/data/memory');
+describe('memory-db', () => {
+  let db;
 
-// Define (i.e., name) the set of tests we're about to do
-describe('Memory Database', () => {
-  // Write a test for calling readFragment() with non-existent fragment
-  test('readFragment() should return null for non-existent fragment', async () => {
-    const result = await readFragment('non-existent-id');
-    expect(result).toBeNull();
+  // Each test will get its own, empty database instance
+  beforeEach(() => {
+    db = new MemoryDB();
   });
 
-  // Write a test for calling writeFragment() and readFragment()
-  test('writeFragment() and readFragment() should work correctly', async () => {
-    const fragment = {
-      id: 'test-fragment-1',
-      ownerId: 'user-123',
-      type: 'text/plain',
-      size: 0
-    };
-
-    await writeFragment(fragment.id, fragment);
-    const result = await readFragment(fragment.id);
-
-    // The result should include the original properties plus updated timestamp
-    expect(result.id).toBe(fragment.id);
-    expect(result.ownerId).toBe(fragment.ownerId);
-    expect(result.type).toBe(fragment.type);
-    expect(result.size).toBe(fragment.size);
-    expect(result.updated).toBeDefined();
-    expect(result.created).toBeDefined();
+  test('put() returns nothing', async () => {
+    const result = await db.put('a', 'b', {});
+    expect(result).toBe(undefined);
   });
 
-  // Write a test for calling readFragmentData() with non-existent fragment
-  test('readFragmentData() should return null for non-existent fragment', async () => {
-    const result = await readFragmentData('non-existent-id');
-    expect(result).toBeNull();
-  });
-
-  // Write a test for calling writeFragmentData() and readFragmentData()
-  test('writeFragmentData() and readFragmentData() should work correctly', async () => {
-    const data = Buffer.from('Hello, world!');
-    const id = 'test-fragment-data';
-
-    await writeFragmentData(id, data);
-    const result = await readFragmentData(id);
+  test('get() returns what we put() into the db', async () => {
+    const data = { value: 123 };
+    await db.put('a', 'b', data);
+    const result = await db.get('a', 'b');
     expect(result).toEqual(data);
   });
 
-  // Write a test for calling listFragments() with non-existent owner
-  test('listFragments() should return empty array for non-existent owner', async () => {
-    const result = await listFragments('non-existent-owner');
-    expect(result).toEqual([]);
+  test('put() and get() work with Buffers', async () => {
+    const data = Buffer.from([1, 2, 3]);
+    await db.put('a', 'b', data);
+    const result = await db.get('a', 'b');
+    expect(result).toEqual(data);
   });
 
-  // Write a test for calling listFragments() with existing owner
-  test('listFragments() should return fragment IDs for existing owner', async () => {
-    const ownerId = 'test-owner';
-    const fragment1 = { id: 'fragment-1', ownerId, type: 'text/plain', size: 0 };
-    const fragment2 = { id: 'fragment-2', ownerId, type: 'text/plain', size: 0 };
-
-    await writeFragment(fragment1.id, fragment1);
-    await writeFragment(fragment2.id, fragment2);
-
-    const result = await listFragments(ownerId);
-    expect(result).toEqual(['fragment-1', 'fragment-2']);
+  test('get() with incorrect secondaryKey returns nothing', async () => {
+    await db.put('a', 'b', 123);
+    const result = await db.get('a', 'c');
+    expect(result).toBe(undefined);
   });
 
-  // Write a test for calling deleteFragment() with non-existent fragment
-  test('deleteFragment() should return false for non-existent fragment', async () => {
-    const result = await deleteFragment('non-existent-id');
-    expect(result).toBe(false);
+  test('query() returns all secondaryKey values', async () => {
+    await db.put('a', 'a', { value: 1 });
+    await db.put('a', 'b', { value: 2 });
+    await db.put('a', 'c', { value: 3 });
+
+    const results = await db.query('a');
+    expect(Array.isArray(results)).toBe(true);
+    expect(results).toEqual([{ value: 1 }, { value: 2 }, { value: 3 }]);
   });
 
-  // Write a test for calling deleteFragment() with existing fragment
-  test('deleteFragment() should return true for existing fragment', async () => {
-    const id = 'fragment-to-delete';
-    const fragment = { id, ownerId: 'owner', type: 'text/plain', size: 0 };
-    const data = Buffer.from('test data');
+  test('query() returns empty array', async () => {
+    await db.put('b', 'a', { value: 1 });
+    await db.put('b', 'b', { value: 2 });
+    await db.put('b', 'c', { value: 3 });
 
-    await writeFragment(id, fragment);
-    await writeFragmentData(id, data);
+    const results = await db.query('a');
+    expect(Array.isArray(results)).toBe(true);
+    expect(results).toEqual([]);
+  });
 
-    const result = await deleteFragment(id);
-    expect(result).toBe(true);
+  test('del() removes value put() into db', async () => {
+    await db.put('a', 'a', { value: 1 });
+    expect(await db.get('a', 'a')).toEqual({ value: 1 });
+    await db.del('a', 'a');
+    expect(await db.get('a', 'a')).toBe(undefined);
+  });
 
-    // Verify fragment is deleted
-    const deletedFragment = await readFragment(id);
-    const deletedData = await readFragmentData(id);
-    expect(deletedFragment).toBeNull();
-    expect(deletedData).toBeNull();
+  test('del() throws if primaryKey and secondaryKey not in db', async () => {
+    await expect(() => db.del('a', 'a')).rejects.toThrow();
+  });
+
+  test('get() expects string keys', async () => {
+    await expect(async () => await db.get()).rejects.toThrow();
+    await expect(async () => await db.get(1)).rejects.toThrow();
+    await expect(async () => await db.get(1, 1)).rejects.toThrow();
+  });
+
+  test('put() expects string keys', async () => {
+    await expect(async () => await db.put()).rejects.toThrow();
+    await expect(async () => await db.put(1)).rejects.toThrow();
+    await expect(async () => await db.put(1, 1)).rejects.toThrow();
+  });
+
+  test('query() expects string key', async () => {
+    await expect(async () => await db.query()).rejects.toThrow();
+    await expect(async () => await db.query(1)).rejects.toThrow();
+  });
+
+  test('del() expects string keys', async () => {
+    await expect(async () => await db.del()).rejects.toThrow();
+    await expect(async () => await db.del(1)).rejects.toThrow();
+    await expect(async () => await db.del(1, 1)).rejects.toThrow();
   });
 });
