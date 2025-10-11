@@ -22,6 +22,10 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run lint
+        env:
+          AWS_COGNITO_POOL_ID: us-east-1_TESTPOOL
+          AWS_COGNITO_CLIENT_ID: test-client-id
+          AWS_REGION: us-east-1
 
   unit-tests:
     name: Unit Tests
