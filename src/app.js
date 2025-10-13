@@ -30,8 +30,8 @@ app.use(
 
 // Security, CORS, Compression
 app.use(helmet());
-app.use(cors());
 app.use(compression());
+app.use(cors());
 
 // Initialize passport authentication
 passport.use(authenticate.strategy());
