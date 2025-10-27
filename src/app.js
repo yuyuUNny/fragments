@@ -3,13 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
-const passport = require('passport');
 const pino = require('pino-http');
 const contentType = require('content-type');
 const Fragment = require('./model/fragment');
 
 // Custom modules
-const authenticate = require('./auth');
 const logger = require('./logger');
 
 // author and version from our package.json file
@@ -24,7 +22,7 @@ app.use(express.json());
 // Logging with Pino
 app.use(
   pino({
-    logger
+    logger,
   })
 );
 
@@ -33,9 +31,16 @@ app.use(helmet());
 app.use(compression());
 app.use(cors());
 
-// Initialize passport authentication
-passport.use(authenticate.strategy());
+// Set up our passport authentication middleware
+const passport = require('passport');
+const authenticate = require('./auth');
+
+// Only set up passport strategy if it exists (not null for testing)
+if (authenticate.strategy && authenticate.strategy()) {
+  passport.use(authenticate.strategy());
+}
 app.use(passport.initialize());
+// Initialize passport authentication
 
 const rawBody = () =>
   express.raw({
@@ -44,7 +49,7 @@ const rawBody = () =>
     type: (req) => {
       const { type } = contentType.parse(req);
       return Fragment.isSupportedType(type);
-    }
+    },
   });
 // Main routes
 app.use('/v1/fragments', rawBody());
@@ -57,7 +62,7 @@ app.get('/', (req, res) => {
     status: 'ok',
     author,
     githubUrl: 'https://github.com/yuyuUNny/fragments',
-    version
+    version,
   });
 });
 
@@ -67,8 +72,8 @@ app.use((req, res) => {
     status: 'error',
     error: {
       message: 'not found',
-      code: 404
-    }
+      code: 404,
+    },
   });
 });
 
@@ -89,8 +94,8 @@ app.use((err, req, res) => {
     status: 'error',
     error: {
       message,
-      code: status
-    }
+      code: status,
+    },
   });
 });
 
