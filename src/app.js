@@ -22,7 +22,7 @@ app.use(express.json());
 // Logging with Pino
 app.use(
   pino({
-    logger,
+    logger
   })
 );
 
@@ -49,7 +49,7 @@ const rawBody = () =>
     type: (req) => {
       const { type } = contentType.parse(req);
       return Fragment.isSupportedType(type);
-    },
+    }
   });
 // Main routes
 app.use('/v1/fragments', rawBody());
@@ -62,7 +62,7 @@ app.get('/', (req, res) => {
     status: 'ok',
     author,
     githubUrl: 'https://github.com/yuyuUNny/fragments',
-    version,
+    version
   });
 });
 
@@ -72,8 +72,8 @@ app.use((req, res) => {
     status: 'error',
     error: {
       message: 'not found',
-      code: 404,
-    },
+      code: 404
+    }
   });
 });
 
@@ -94,8 +94,8 @@ app.use((err, req, res) => {
     status: 'error',
     error: {
       message,
-      code: status,
-    },
+      code: status
+    }
   });
 });
 

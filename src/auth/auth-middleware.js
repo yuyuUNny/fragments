@@ -23,8 +23,8 @@ module.exports = (strategy) => {
           status: 'error',
           error: {
             message: 'unauthorized',
-            code: 401,
-          },
+            code: 401
+          }
         });
       }
 
