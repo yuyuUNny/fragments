@@ -43,3 +43,25 @@ jobs:
           AWS_COGNITO_POOL_ID: us-east-1_TESTPOOL
           AWS_COGNITO_CLIENT_ID: test-client-id
           AWS_REGION: us-east-1
+
+  docker:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/fragments:latest .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/fragments:latest ${{ secrets.DOCKER_USERNAME }}/fragments:lab-6-step21
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/fragments:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/fragments:lab-6-step21

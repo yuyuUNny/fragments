@@ -1,5 +1,6 @@
 # Use node version 23.9.0
-FROM node:23.9.0
+#FROM node:23.9.0
+FROM node:23-alpine
 
 LABEL maintainer="Uny Li <sli359@myseneca.ca>"
 LABEL description="Fragments node.js microservice"
