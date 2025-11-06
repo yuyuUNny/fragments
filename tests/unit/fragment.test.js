@@ -5,7 +5,7 @@ const {
   writeFragment,
   readFragment,
   writeFragmentData,
-  readFragmentData
+  readFragmentData,
 } = require('../../src/model/data/memory');
 
 // Define (i.e., name) the set of tests we're about to do
@@ -16,7 +16,7 @@ describe('Fragment class', () => {
       id: 'test-id',
       ownerId: 'test-owner',
       type: 'text/plain',
-      size: 100
+      size: 100,
     });
 
     expect(fragment.id).toBe('test-id');
@@ -31,7 +31,7 @@ describe('Fragment class', () => {
   test('Fragment constructor should generate ID if not provided', () => {
     const fragment = new Fragment({
       ownerId: 'test-owner',
-      type: 'text/plain'
+      type: 'text/plain',
     });
 
     expect(fragment.id).toBeDefined();
@@ -43,12 +43,12 @@ describe('Fragment class', () => {
   test('Fragment constructor should set created and updated timestamps', () => {
     const fragment = new Fragment({
       ownerId: 'test-owner',
-      type: 'text/plain'
+      type: 'text/plain',
     });
 
     expect(fragment.created).toBeDefined();
     expect(fragment.updated).toBeDefined();
-    expect(fragment.created).toEqual(fragment.updated);
+    expect(fragment.created).toBe(fragment.updated);
   });
 
   // Write a test for isSupportedType()
@@ -69,7 +69,7 @@ describe('Fragment class', () => {
       id: 'test-fragment-user',
       ownerId,
       type: 'text/plain',
-      size: 0
+      size: 0,
     };
 
     // First create a fragment for the user
@@ -88,7 +88,7 @@ describe('Fragment class', () => {
       id: 'test-fragment-id',
       ownerId: 'test-owner',
       type: 'text/plain',
-      size: 0
+      size: 0,
     };
 
     // First create a fragment
@@ -110,7 +110,7 @@ describe('Fragment class', () => {
   test('save() should update fragment and call writeFragment', async () => {
     const fragment = new Fragment({
       ownerId: 'test-owner',
-      type: 'text/plain'
+      type: 'text/plain',
     });
 
     await fragment.save();
@@ -125,7 +125,7 @@ describe('Fragment class', () => {
   test('getData() should return fragment data', async () => {
     const fragment = new Fragment({
       ownerId: 'test-owner',
-      type: 'text/plain'
+      type: 'text/plain',
     });
 
     const testData = Buffer.from('Hello, world!');
@@ -139,7 +139,7 @@ describe('Fragment class', () => {
   test('setData() should set fragment data and update size', async () => {
     const fragment = new Fragment({
       ownerId: 'test-owner',
-      type: 'text/plain'
+      type: 'text/plain',
     });
 
     const testData = Buffer.from('Test data for fragment');
@@ -156,7 +156,7 @@ describe('Fragment class', () => {
   test('delete() should delete fragment', async () => {
     const fragment = new Fragment({
       ownerId: 'test-owner',
-      type: 'text/plain'
+      type: 'text/plain',
     });
 
     // Save the fragment first
