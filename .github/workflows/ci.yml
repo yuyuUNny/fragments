@@ -55,6 +55,29 @@ jobs:
           AWS_COGNITO_CLIENT_ID: test-client-id
           AWS_REGION: us-east-1
 
+  docker-hub:
+    name: Build and Push to Docker Hub
+    needs: [lint, dockerfile-lint, unit-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push
+        env:
+          DOCKERHUB_REPO: yuyuunny/fragments
+          SHA_TAG: sha-${{ github.sha }}
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ env.DOCKERHUB_REPO }}:${{ env.SHA_TAG }}, ${{ env.DOCKERHUB_REPO }}:main, ${{ env.DOCKERHUB_REPO }}:latest
+
   docker:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
