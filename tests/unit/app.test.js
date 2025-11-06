@@ -2,6 +2,7 @@
 const request = require('supertest');
 const app = require('../../src/app');
 
+// eslint-disable-next-line jest/no-disabled-tests
 describe.skip('App Tests', () => {
   describe('GET /', () => {
     test('should return health check information', async () => {
