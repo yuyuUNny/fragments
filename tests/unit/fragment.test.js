@@ -48,7 +48,7 @@ describe('Fragment class', () => {
 
     expect(fragment.created).toBeDefined();
     expect(fragment.updated).toBeDefined();
-    expect(fragment.created).toBe(fragment.updated);
+    expect(fragment.created).toEqual(fragment.updated);
   });
 
   // Write a test for isSupportedType()

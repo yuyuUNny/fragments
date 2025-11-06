@@ -12,12 +12,12 @@ describe('POST /api/fragments', () => {
     req = {
       get: jest.fn(),
       body: Buffer.from('test fragment data'),
-      user: { email: 'user@example.com' }
+      user: { email: 'user@example.com' },
     };
 
     res = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
     };
 
     createSuccessResponse.mockImplementation((data) => data);
@@ -36,7 +36,7 @@ describe('POST /api/fragments', () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       code: 400,
-      message: 'Content-Type header is required'
+      message: 'Content-Type header is required',
     });
   });
 
@@ -49,7 +49,7 @@ describe('POST /api/fragments', () => {
     expect(res.status).toHaveBeenCalledWith(415);
     expect(res.json).toHaveBeenCalledWith({
       code: 415,
-      message: 'Content type unsupported/type is not supported'
+      message: 'Content type unsupported/type is not supported',
     });
   });
 
@@ -70,7 +70,7 @@ describe('POST /api/fragments', () => {
 
     const mockFragment = {
       setData: jest.fn(),
-      save: jest.fn()
+      save: jest.fn(),
     };
     Fragment.mockImplementation(() => mockFragment);
 
@@ -78,7 +78,7 @@ describe('POST /api/fragments', () => {
 
     expect(Fragment).toHaveBeenCalledWith({
       ownerId: 'user@example.com',
-      type: 'text/plain'
+      type: 'text/plain',
     });
     expect(mockFragment.setData).toHaveBeenCalledWith(req.body);
     expect(mockFragment.save).toHaveBeenCalled();
@@ -87,6 +87,7 @@ describe('POST /api/fragments', () => {
   });
 
   test('handles internal server error', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
     req.get.mockReturnValue('text/plain');
     Fragment.isSupportedType.mockReturnValue(true);
     Fragment.mockImplementation(() => {
@@ -98,7 +99,7 @@ describe('POST /api/fragments', () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
       code: 500,
-      message: 'Failed to create fragment'
+      message: 'Failed to create fragment',
     });
   });
 });
