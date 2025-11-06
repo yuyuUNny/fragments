@@ -27,12 +27,10 @@ jobs:
           AWS_COGNITO_CLIENT_ID: test-client-id
           AWS_REGION: us-east-1
 
-  # Lint our Dockerfile using Hadolint
   dockerfile-lint:
     name: Dockerfile Lint
     runs-on: ubuntu-latest
     steps:
-      # https://github.com/marketplace/actions/hadolint-action
       - uses: actions/checkout@v4
       - uses: hadolint/hadolint-action@v3.1.0
         with:
