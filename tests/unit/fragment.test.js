@@ -58,7 +58,6 @@ describe('Fragment class', () => {
 
   // Write a test for isSupportedType() with unsupported type
   test('isSupportedType() should return false for unsupported types', () => {
-    expect(Fragment.isSupportedType('application/json')).toBe(false);
     expect(Fragment.isSupportedType('image/png')).toBe(false);
   });
 

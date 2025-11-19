@@ -40,7 +40,6 @@ module.exports = async (req, res) => {
       })
     );
   } catch (err) {
-    console.error('Error creating fragment:', err);
     res.status(500).json(createErrorResponse(500, 'Failed to create fragment'));
   }
 };

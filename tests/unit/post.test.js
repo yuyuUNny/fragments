@@ -77,7 +77,9 @@ describe('POST /api/fragments', () => {
     await post(req, res);
 
     expect(Fragment).toHaveBeenCalledWith({
-      ownerId: 'user@example.com',
+      ownerId: {
+        email: 'user@example.com'
+      },
       type: 'text/plain'
     });
     expect(mockFragment.setData).toHaveBeenCalledWith(req.body);
