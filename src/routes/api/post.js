@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     }
 
     // Create the fragment
-    const ownerId = req.user.email;
+    const ownerId = req.user;
     const fragment = new Fragment({
       ownerId,
       type: contentType

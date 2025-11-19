@@ -144,7 +144,8 @@ class Fragment {
    * @returns {boolean} - True if supported, false otherwise
    */
   static isSupportedType (type) {
-    return type === 'text/plain';
+    // POST /fragments can now create any text/* or application/json fragments(assignment2)
+    return type.startsWith('text/') || type === 'application/json';
   }
 }
 
