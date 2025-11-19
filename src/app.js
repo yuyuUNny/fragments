@@ -16,8 +16,14 @@ const { author, version } = require('../package.json');
 // Create an express app
 const app = express();
 
+// Security, CORS, Compression
+app.use(helmet());
+app.use(compression());
+app.use(cors());
+
 // JSON parsing
-app.use(express.json());
+// app.use(express.json());
+app.use(express.raw({ type: '*/*' }));
 
 // Logging with Pino
 app.use(
@@ -25,11 +31,6 @@ app.use(
     logger
   })
 );
-
-// Security, CORS, Compression
-app.use(helmet());
-app.use(compression());
-app.use(cors());
 
 // Set up our passport authentication middleware
 const passport = require('passport');
