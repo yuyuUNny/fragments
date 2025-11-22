@@ -11,7 +11,7 @@ if (
 }
 
 // For testing (NODE_ENV=test or LOG_LEVEL=silent), don't require authentication
-if (process.env.NODE_ENV === 'test' || process.env.LOG_LEVEL === 'silent') {
+if (process.env.NODE_ENV === 'test') {
   // Export a dummy authentication function that just passes through
   module.exports.authenticate = () => (req, res, next) => {
     // For testing, just set a dummy user

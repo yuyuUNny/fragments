@@ -11,7 +11,8 @@
     "test": "jest -c jest.config.js --runInBand --",
     "test:watch": "jest -c jest.config.js --runInBand --watch --",
     "coverage": "jest -c jest.config.js --runInBand --coverage",
-    "prettier": "prettier"
+    "prettier": "prettier",
+    "test:integration": "hurl --test --glob \"tests/integration/**/*.hurl\""
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
   "description": "Fragments back-end API",
   "devDependencies": {
     "@eslint/js": "^9.34.0",
+    "@orangeopensource/hurl": "^7.1.0",
     "eslint": "^8.57.1",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.32.0",

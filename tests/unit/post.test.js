@@ -17,7 +17,8 @@ describe('POST /api/fragments', () => {
 
     res = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
+      setHeader: jest.fn()
     };
 
     createSuccessResponse.mockImplementation((data) => data);
@@ -69,8 +70,9 @@ describe('POST /api/fragments', () => {
     Fragment.isSupportedType.mockReturnValue(true);
 
     const mockFragment = {
-      setData: jest.fn(),
-      save: jest.fn()
+      id: 'test-fragment-id',
+      setData: jest.fn().mockResolvedValue(),
+      save: jest.fn().mockResolvedValue()
     };
     Fragment.mockImplementation(() => mockFragment);
 

@@ -8,9 +8,7 @@ const { version, author } = require('../../package.json');
 // Create a router that we can use to mount our API
 const router = express.Router();
 
-const { authenticate } = require('../auth');
-
-router.use('/v1', authenticate(), require('./api'));
+router.use('/', require('./api'));
 
 router.get('/', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');

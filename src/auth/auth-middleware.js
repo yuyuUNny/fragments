@@ -1,5 +1,4 @@
 // src/auth/auth-middleware.js
-
 const { hash } = require('../hash');
 
 /**

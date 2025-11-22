@@ -4,8 +4,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const pino = require('pino-http');
-const contentType = require('content-type');
-const Fragment = require('./model/fragment');
 
 // Custom modules
 const logger = require('./logger');
@@ -21,16 +19,8 @@ app.use(helmet());
 app.use(compression());
 app.use(cors());
 
-// JSON parsing
-// app.use(express.json());
-app.use(express.raw({ type: '*/*' }));
-
 // Logging with Pino
-app.use(
-  pino({
-    logger
-  })
-);
+app.use(pino({ logger }));
 
 // Set up our passport authentication middleware
 const passport = require('passport');
@@ -43,18 +33,8 @@ if (authenticate.strategy && authenticate.strategy()) {
 app.use(passport.initialize());
 // Initialize passport authentication
 
-const rawBody = () =>
-  express.raw({
-    inflate: true,
-    limit: '5mb',
-    type: (req) => {
-      const { type } = contentType.parse(req);
-      return Fragment.isSupportedType(type);
-    }
-  });
 // Main routes
-app.use('/v1/fragments', rawBody());
-app.use('/', require('./routes'));
+app.use('/v1', require('./routes'));
 
 // Health check route
 app.get('/', (req, res) => {

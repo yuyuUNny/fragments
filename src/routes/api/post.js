@@ -33,6 +33,9 @@ module.exports = async (req, res) => {
     await fragment.setData(req.body);
     await fragment.save();
 
+    // Set Location header
+    res.setHeader('Location', `http://localhost:8080/v1/fragments/${fragment.id}`);
+
     // Return success response with fragment data
     res.status(201).json(
       createSuccessResponse({
