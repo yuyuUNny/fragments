@@ -12,7 +12,7 @@ const rawBody = () =>
     type: (req) => {
       const { type } = contentType.parse(req);
       return Fragment.isSupportedType(type);
-    }
+    },
   });
 
 router.get('/fragments', authenticate('http'), require('./get'));
