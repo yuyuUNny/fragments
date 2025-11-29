@@ -4,7 +4,7 @@ const logger = require('../../../logger.js');
 const { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 
 // Write a fragment's metadata to memory db. Returns a Promise<void>
-async function writeFragment(fragment) {
+async function writeFragment (fragment) {
   if (!fragment || !fragment.ownerId || !fragment.id) {
     throw new Error('Fragment must include ownerId and id');
   }
@@ -13,7 +13,7 @@ async function writeFragment(fragment) {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
     Key: `${fragment.ownerId}/${fragment.id}.json`,
     Body: serialized,
-    ContentType: 'application/json',
+    ContentType: 'application/json'
   };
 
   try {
@@ -25,10 +25,10 @@ async function writeFragment(fragment) {
 }
 
 // Read a fragment's metadata from memory db. Returns a Promise<Object>
-async function readFragment(ownerId, id) {
+async function readFragment (ownerId, id) {
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
-    Key: `${ownerId}/${id}.json`,
+    Key: `${ownerId}/${id}.json`
   };
 
   try {
@@ -46,13 +46,13 @@ async function readFragment(ownerId, id) {
 }
 
 // Writes a fragment's data to an S3 Object in a Bucket
-async function writeFragmentData(ownerId, id, data) {
+async function writeFragmentData (ownerId, id, data) {
   // Create the PUT API params from our details
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
     // Our key will be a mix of the ownerID and fragment id, written as a path
     Key: `${ownerId}/${id}`,
-    Body: data,
+    Body: data
   };
 
   // Create a PUT Object command to send to S3
@@ -83,12 +83,12 @@ const streamToBuffer = (stream) =>
   });
 
 // Reads a fragment's data from S3 and returns (Promise<Buffer>)
-async function readFragmentData(ownerId, id) {
+async function readFragmentData (ownerId, id) {
   // Create the PUT API params from our details
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
     // Our key will be a mix of the ownerID and fragment id, written as a path
-    Key: `${ownerId}/${id}`,
+    Key: `${ownerId}/${id}`
   };
 
   // Create a GET Object command to send to S3
@@ -107,13 +107,13 @@ async function readFragmentData(ownerId, id) {
 }
 
 // Get a list of fragment ids/objects for the given user from memory db. Returns a Promise
-async function listFragments(ownerId, expand = false) {
+async function listFragments (ownerId, expand = false) {
   // placeholder until DynamoDB implementation
   return [];
 }
 
 // Delete a fragment's metadata and data from memory db. Returns a Promise
-async function deleteFragment(ownerId, id) {
+async function deleteFragment (ownerId, id) {
   if (!ownerId || !id) {
     throw new Error('ownerId and id are required');
   }
@@ -123,14 +123,14 @@ async function deleteFragment(ownerId, id) {
     await s3Client.send(
       new DeleteObjectCommand({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: `${ownerId}/${id}.json`,
+        Key: `${ownerId}/${id}.json`
       })
     );
     // Delete raw data
     await s3Client.send(
       new DeleteObjectCommand({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: `${ownerId}/${id}`,
+        Key: `${ownerId}/${id}`
       })
     );
   } catch (err) {

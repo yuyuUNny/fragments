@@ -13,21 +13,21 @@ module.exports = async (req, res) => {
     if (!fragment) {
       return res.status(404).json({
         status: 'error',
-        message: `Fragment with id '${id}' not found`,
+        message: `Fragment with id '${id}' not found`
       });
     }
 
     // fragment exists → return metadata
     res.status(200).json(
       createSuccessResponse({
-        fragment: fragment.toJSON(),
+        fragment: fragment.toJSON()
       })
     );
   } catch (err) {
     console.error(err);
     res.status(500).json({
       status: 'error',
-      message: 'Unable to fetch fragment metadata',
+      message: 'Unable to fetch fragment metadata'
     });
   }
 };

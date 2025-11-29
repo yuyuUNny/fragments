@@ -10,13 +10,13 @@ module.exports = async (req, res) => {
     await deleteFragment(ownerId, id);
     res.status(200).json({
       status: 'ok',
-      fragment: { id },
+      fragment: { id }
     });
   } catch (err) {
     logger.error(err);
     res.status(404).json({
       status: 'error',
-      message: 'Fragment not found',
+      message: 'Fragment not found'
     });
   }
 };

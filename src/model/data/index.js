@@ -11,7 +11,7 @@ const {
   writeFragmentData,
   readFragmentData,
   listFragments,
-  deleteFragment,
+  deleteFragment
 } = require('./memory');
 
 module.exports = {
@@ -20,5 +20,5 @@ module.exports = {
   writeFragmentData,
   readFragmentData,
   listFragments,
-  deleteFragment,
+  deleteFragment
 };

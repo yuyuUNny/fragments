@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
     if (!fragment) {
       return res.status(404).json({
         status: 'error',
-        message: `Fragment '${id}' not found`,
+        message: `Fragment '${id}' not found`
       });
     }
 
@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
         if (fragment.type !== 'text/markdown') {
           return res.status(415).json({
             status: 'error',
-            message: `Cannot convert '${fragment.type}' to HTML`,
+            message: `Cannot convert '${fragment.type}' to HTML`
           });
         }
 
@@ -47,7 +47,7 @@ module.exports = async (req, res) => {
       // Unsupported extension
       return res.status(415).json({
         status: 'error',
-        message: `Unsupported extension '.${ext}'`,
+        message: `Unsupported extension '.${ext}'`
       });
     }
 
@@ -58,7 +58,7 @@ module.exports = async (req, res) => {
     console.error(err);
     res.status(500).json({
       status: 'error',
-      message: 'Failed to retrieve fragment data',
+      message: 'Failed to retrieve fragment data'
     });
   }
 };

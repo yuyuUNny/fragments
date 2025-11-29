@@ -21,7 +21,7 @@ const getCredentials = () => {
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       // Optionally include the AWS Session Token, too (e.g., if you're connecting to AWS from your laptop).
       // Not all situations require this, so we won't check for it above, just use it if it is present.
-      sessionToken: process.env.AWS_SESSION_TOKEN,
+      sessionToken: process.env.AWS_SESSION_TOKEN
     };
     logger.debug('Using extra S3 Credentials AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY');
     return credentials;
@@ -54,5 +54,5 @@ module.exports = new S3Client({
   // The endpoint URL is optional
   endpoint: getS3Endpoint(),
   // We always want to use path style key names
-  forcePathStyle: true,
+  forcePathStyle: true
 });
