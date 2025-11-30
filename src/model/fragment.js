@@ -100,7 +100,7 @@ class Fragment {
     this.updated = new Date().toISOString();
 
     await writeFragmentData(this.ownerId, this.id, data);
-    await this.save(); // Update metadata with new size and timestamp
+    await this.save();
   }
 
   /**
