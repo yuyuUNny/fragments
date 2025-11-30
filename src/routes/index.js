@@ -2,7 +2,7 @@
 
 const express = require('express');
 const { hostname } = require('os');
-const { createSuccessResponse } = require('../../response');
+const { createSuccessResponse } = require('../response');
 // version and author from package.json
 const { version, author } = require('../../package.json');
 
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
     status: 'ok',
     author,
     githubUrl: 'https://github.com/yuyuUNny/fragments',
-    version
+    version,
   });
 });
 
@@ -28,7 +28,7 @@ router.get('/', (req, res) => {
       author: 'Uny Li',
       githubUrl: 'https://github.com/yuyuUNny/fragments',
       version,
-      hostname: hostname()
+      hostname: hostname(),
     })
   );
 });
