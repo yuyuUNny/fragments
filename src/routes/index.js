@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
     status: 'ok',
     author,
     githubUrl: 'https://github.com/yuyuUNny/fragments',
-    version,
+    version
   });
 });
 
@@ -28,7 +28,7 @@ router.get('/', (req, res) => {
       author: 'Uny Li',
       githubUrl: 'https://github.com/yuyuUNny/fragments',
       version,
-      hostname: hostname(),
+      hostname: hostname()
     })
   );
 });
