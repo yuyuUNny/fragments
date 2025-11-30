@@ -52,3 +52,11 @@ jobs:
           environment-variables: |
             LOG_LEVEL=info
             NODE_ENV=production
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.update-task-def.outputs.task-definition }}
+          cluster: fragments-cluster-sli
+          service: fragments-task-service-tnr24zeo
+          wait-for-service-stability: true

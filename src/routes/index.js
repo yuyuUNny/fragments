@@ -1,7 +1,8 @@
 // src/routes/index.js
 
 const express = require('express');
-
+const { hostname } = require('os');
+const { createSuccessResponse } = require('../../response');
 // version and author from package.json
 const { version, author } = require('../../package.json');
 
@@ -18,6 +19,18 @@ router.get('/', (req, res) => {
     githubUrl: 'https://github.com/yuyuUNny/fragments',
     version
   });
+});
+
+router.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache');
+  res.status(200).json(
+    createSuccessResponse({
+      author: 'Uny Li',
+      githubUrl: 'https://github.com/yuyuUNny/fragments',
+      version,
+      hostname: hostname()
+    })
+  );
 });
 
 module.exports = router;
