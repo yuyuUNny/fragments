@@ -1,5 +1,5 @@
 // src/routes/api/get-by-id-info.js
-const { Fragment } = require('../../model/fragment');
+const Fragment = require('../../model/fragment');
 const { createSuccessResponse } = require('../../response');
 
 module.exports = async (req, res) => {
@@ -20,7 +20,14 @@ module.exports = async (req, res) => {
     // fragment exists → return metadata
     res.status(200).json(
       createSuccessResponse({
-        fragment: fragment.toJSON()
+        fragment: {
+          id: fragment.id,
+          ownerId: fragment.ownerId,
+          type: fragment.type,
+          size: fragment.size,
+          created: fragment.created,
+          updated: fragment.updated
+        }
       })
     );
   } catch (err) {

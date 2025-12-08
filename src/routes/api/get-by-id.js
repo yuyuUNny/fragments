@@ -1,5 +1,5 @@
 // src/routes/api/get-by-id.js
-const { Fragment } = require('../../model/fragment');
+const Fragment = require('../../model/fragment');
 const markdownIt = require('markdown-it');
 const md = markdownIt();
 

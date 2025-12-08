@@ -1,5 +1,5 @@
 // src/routes/api/delete-by-id.js
-const { deleteFragment } = require('../../model/fragments');
+const Fragment = require('../../model/fragment');
 const logger = require('../../logger');
 
 module.exports = async (req, res) => {
@@ -7,7 +7,11 @@ module.exports = async (req, res) => {
   const id = req.params.id;
 
   try {
-    await deleteFragment(ownerId, id);
+    const fragment = await Fragment.byId(ownerId, id);
+
+    // delete the fragment
+    await fragment.delete();
+
     res.status(200).json({
       status: 'ok',
       fragment: { id }
