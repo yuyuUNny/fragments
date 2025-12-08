@@ -1,5 +1,6 @@
 // src/auth/auth-middleware.js
 const { hash } = require('../hash');
+const logger = require('../logger');
 
 /**
  * Middleware to hash the user's email address for privacy
@@ -14,10 +15,12 @@ module.exports = (strategy) => {
 
     passport.authenticate(strategy, { session: false }, (err, email) => {
       if (err) {
+        logger.error({ err }, 'Authentication error');
         return next(err);
       }
 
       if (!email) {
+        logger.warn('Authentication failed - no email returned');
         return res.status(401).json({
           status: 'error',
           error: {

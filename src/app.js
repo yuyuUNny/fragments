@@ -28,7 +28,7 @@ const authenticate = require('./auth');
 
 // Only set up passport strategy if it exists (not null for testing)
 if (authenticate.strategy && authenticate.strategy()) {
-  passport.use(authenticate.strategy());
+  passport.use('bearer', authenticate.strategy());
 }
 app.use(passport.initialize());
 // Initialize passport authentication

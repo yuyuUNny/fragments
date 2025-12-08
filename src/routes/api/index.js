@@ -15,10 +15,10 @@ const rawBody = () =>
     }
   });
 
-router.get('/fragments', authenticate('http'), require('./get'));
-router.post('/fragments', authenticate('http'), rawBody(), require('./post'));
-router.get('/fragments/:id', authenticate('http'), require('./get-id'));
-router.get('/fragments/:id/info', authenticate('http'), require('./get-by-id-info'));
-router.delete('/fragments/:id', authenticate('http'), require('./delete-by-id'));
+router.get('/fragments', authenticate('bearer'), require('./get'));
+router.post('/fragments', authenticate('bearer'), rawBody(), require('./post'));
+router.get('/fragments/:id', authenticate('bearer'), require('./get-id'));
+router.get('/fragments/:id/info', authenticate('bearer'), require('./get-by-id-info'));
+router.delete('/fragments/:id', authenticate('bearer'), require('./delete-by-id'));
 
 module.exports = router;

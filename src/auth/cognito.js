@@ -31,7 +31,6 @@ module.exports.strategy = () =>
     try {
       const user = await jwtVerifier.verify(token);
       logger.debug({ user }, 'verified user token');
-
       done(null, user.email);
     } catch (err) {
       logger.error({ err, token }, 'could not verify token');
