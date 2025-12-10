@@ -3,24 +3,26 @@
   "containerDefinitions": [
     {
       "name": "fragments",
-      "image": "dcjoker/fragments:latest",
+      "image": "381491909360.dkr.ecr.us-east-1.amazonaws.com/fragments:latest",
       "cpu": 512,
       "memory": 1024,
       "essential": true,
       "portMappings": [
         {
           "containerPort": 8080,
-          "hostPort": 8080
+          "hostPort": 8080,
+          "protocol": "tcp"
         }
       ],
       "environment": [
         { "name": "PORT", "value": "8080" },
-        { "name": "LOG_LEVEL", "value": "debug" },
+        { "name": "LOG_LEVEL", "value": "info" },
         { "name": "AWS_REGION", "value": "us-east-1" },
-        { "name": "AWS_S3_BUCKET_NAME", "value": "ccp555-demo-fragments-dc" },
+        { "name": "AWS_S3_BUCKET_NAME", "value": "fragments-381491909360" },
         { "name": "AWS_DYNAMODB_TABLE_NAME", "value": "fragments" },
-        { "name": "AWS_COGNITO_POOL_ID", "value": "us-east-1_tADSehAHN" },
-        { "name": "AWS_COGNITO_CLIENT_ID", "value": "6tq7d72o488vigrrb0glgniv2m" }
+        { "name": "AWS_COGNITO_POOL_ID", "value": "us-east-1_tcAMfUQM" },
+        { "name": "AWS_COGNITO_CLIENT_ID", "value": "517bu95qce9s8kmk8bn2i0v3pr" },
+        { "name": "HASH_SECRET", "value": "fragments-secret-key-2025" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
@@ -36,6 +38,6 @@
   "networkMode": "awsvpc",
   "cpu": "512",
   "memory": "1024",
-  "executionRoleArn": "arn:aws:iam::330270527038:role/LabRole",
-  "taskRoleArn": "arn:aws:iam::330270527038:role/LabRole"
+  "executionRoleArn": "arn:aws:ecs:us-east-1:381491909360:role/LabRole",
+  "taskRoleArn": "arn:aws:iam::381491909360:role/LabRole"
 }
