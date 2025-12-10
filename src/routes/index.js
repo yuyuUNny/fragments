@@ -17,7 +17,8 @@ router.get('/', (req, res) => {
     status: 'ok',
     author,
     githubUrl: 'https://github.com/yuyuUNny/fragments',
-    version
+    version,
+    timestamp: new Date().toISOString()
   });
 });
 
