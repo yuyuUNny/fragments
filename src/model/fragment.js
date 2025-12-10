@@ -145,7 +145,30 @@ class Fragment {
    */
   static isSupportedType (type) {
     // POST /fragments can now create any text/* or application/json fragments(assignment2)
-    return type.startsWith('text/') || type === 'application/json';
+    return type.startsWith('text/') || type === 'application/json' || type.startsWith('image/');
+  }
+
+  /**
+   * Modify fragment data and optionally type
+   * @param {Buffer|string} newData - New content (Buffer for binary, string for text)
+   * @param {string} [newType] - Optional new MIME type
+   * @returns {Promise<void>}
+   */
+  async modify (newData, newType) {
+    if (!newData) throw new Error('New data is required');
+
+    if (typeof newData === 'string' && this.isText) {
+      newData = Buffer.from(newData, 'utf-8');
+    }
+
+    if (newType) {
+      if (!Fragment.isSupportedType(newType)) {
+        throw new Error(`Unsupported type: ${newType}`);
+      }
+      this.type = newType;
+    }
+
+    await this.setData(newData);
   }
 }
 

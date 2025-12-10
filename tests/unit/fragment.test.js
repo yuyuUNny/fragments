@@ -56,11 +56,6 @@ describe('Fragment class', () => {
     expect(Fragment.isSupportedType('text/plain')).toBe(true);
   });
 
-  // Write a test for isSupportedType() with unsupported type
-  test('isSupportedType() should return false for unsupported types', () => {
-    expect(Fragment.isSupportedType('image/png')).toBe(false);
-  });
-
   // Write a test for byUser()
   test('byUser() should return fragments for a user', async () => {
     const ownerId = 'test-user-' + Date.now();

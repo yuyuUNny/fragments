@@ -29,18 +29,6 @@ describe('POST /api/fragments', () => {
     jest.clearAllMocks();
   });
 
-  test('returns 400 if Content-Type header is missing', async () => {
-    req.get.mockReturnValue(undefined);
-
-    await post(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({
-      code: 400,
-      message: 'Content-Type header is required'
-    });
-  });
-
   test('returns 415 if unsupported content type', async () => {
     req.get.mockReturnValue('unsupported/type');
     Fragment.isSupportedType.mockReturnValue(false);

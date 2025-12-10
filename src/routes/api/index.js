@@ -20,5 +20,6 @@ router.post('/fragments', authenticate('bearer'), rawBody(), require('./post'));
 router.get('/fragments/:id', authenticate('bearer'), require('./get-id'));
 router.get('/fragments/:id/info', authenticate('bearer'), require('./get-by-id-info'));
 router.delete('/fragments/:id', authenticate('bearer'), require('./delete-by-id'));
+router.patch('/fragments/:id', authenticate('bearer'), require('./patch'));
 
 module.exports = router;

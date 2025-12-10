@@ -4,45 +4,41 @@ const Fragment = require('../../model/fragment');
 
 module.exports = async (req, res) => {
   try {
-    // Validate content type
+    const ownerId = req.user;
     const contentType = req.get('Content-Type');
-    if (!contentType) {
-      return res.status(400).json(createErrorResponse(400, 'Content-Type header is required'));
-    }
 
-    // Check if content type is supported
-    if (!Fragment.isSupportedType(contentType)) {
+    console.log('=== POST /fragments ===');
+    console.log('Raw Content-Type header:', contentType);
+    console.log('Is supported?', Fragment.isSupportedType(contentType));
+    console.log('Body type:', typeof req.body);
+    console.log('Is Buffer?', Buffer.isBuffer(req.body));
+    console.log('Body length:', req.body?.length);
+    console.log('======================');
+
+    if (!contentType || !Fragment.isSupportedType(contentType)) {
       return res
         .status(415)
         .json(createErrorResponse(415, `Content type ${contentType} is not supported`));
     }
 
-    // Validate body exists
-    if (!req.body || req.body.length === 0) {
+    const data = req.body;
+
+    if (!data || (Buffer.isBuffer(data) && data.length === 0)) {
       return res.status(400).json(createErrorResponse(400, 'Fragment data is required'));
     }
 
-    // Create the fragment
-    const ownerId = req.user;
     const fragment = new Fragment({
       ownerId,
       type: contentType
     });
 
-    // Save the fragment data
-    await fragment.setData(req.body);
+    await fragment.setData(data);
     await fragment.save();
 
-    // Set Location header
     res.setHeader('Location', `http://localhost:8080/v1/fragments/${fragment.id}`);
-
-    // Return success response with fragment data
-    res.status(201).json(
-      createSuccessResponse({
-        fragment
-      })
-    );
+    res.status(201).json(createSuccessResponse({ fragment }));
   } catch (err) {
+    console.error('POST /fragments error:', err);
     res.status(500).json(createErrorResponse(500, 'Failed to create fragment'));
   }
 };
