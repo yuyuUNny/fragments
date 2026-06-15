@@ -25,18 +25,40 @@ module.exports = async (req, res) => {
 
     const data = await fragment.getData();
 
-    // markdown → html or text
+    // Check for Accept header (takes precedence over extension)
+    const acceptHeader = req.get('Accept');
+
+    // Handle Accept header conversion
+    if (acceptHeader && acceptHeader !== '*/*' && acceptHeader !== fragment.type) {
+      if (fragment.type === 'text/markdown' && acceptHeader === 'text/html') {
+        res.set('Content-Type', 'text/html');
+        return res.status(200).send(md.render(data.toString()));
+      }
+      if (fragment.type === 'text/markdown' && acceptHeader === 'text/plain') {
+        res.set('Content-Type', 'text/plain');
+        return res.status(200).send(data);
+      }
+      // Check if conversion is supported
+      if (!fragment.formats.includes(acceptHeader)) {
+        return res
+          .status(415)
+          .json(createErrorResponse(415, `Cannot convert ${fragment.type} to ${acceptHeader}`));
+      }
+      // Return as-is if same type
+      res.set('Content-Type', acceptHeader);
+      return res.status(200).send(data);
+    }
+
+    // Handle extension-based conversion (fallback)
     if (ext) {
       if (fragment.type === 'text/markdown' && ext === 'html') {
         res.set('Content-Type', 'text/html');
         return res.status(200).send(md.render(data.toString()));
       }
-
       if (fragment.type === 'text/markdown' && ext === 'txt') {
         res.set('Content-Type', 'text/plain');
         return res.status(200).send(data);
       }
-
       return res
         .status(415)
         .json(createErrorResponse(415, `Cannot convert ${fragment.type} to .${ext}`));
